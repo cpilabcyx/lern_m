@@ -1,0 +1,215 @@
+#include <iostream>  
+#include <vector>  
+#include <stack>
+
+template<typename T>
+class MyClass
+{
+public:
+	MyClass()
+	{
+		left_child = NULL;
+		right_child = NULL;
+		data = 0;
+		depth = 0;
+	}
+
+	void visit(MyClass *ptr)
+	{
+		if (ptr!=NULL)
+			std::cout << ptr->data << " ";
+	}
+
+	~MyClass(){};
+
+public:
+	MyClass* left_child;
+	MyClass* right_child;
+	T data;
+	int depth;
+
+private:
+
+};
+
+std::stack<MyClass<char> *>my_stack;
+std::stack<int>my_num;
+
+template<typename T>
+void for_each(MyClass<T> *root)
+{
+	if (root->left_child != NULL)
+	{
+		root->left_child->depth = (root->depth) + 1;
+		for_each(root->left_child);
+	}
+
+	if (root == NULL)return;
+	root->visit(root);
+
+	if (root->right_child != NULL)
+	{
+		root->right_child->depth = (root->depth) + 1;
+		for_each(root->right_child);
+	}
+
+}
+
+//非递归先序遍历
+
+//1、先访问根节点，
+
+//2、右节点入战，左节点入战
+
+//3、取站顶为跟节点
+
+template<typename T>
+void for_each_befor(MyClass<T> *root)
+{
+	do
+	{
+		if (root)
+			root->visit(root);
+
+		if (root->right_child)
+			my_stack.push(root->right_child);
+
+		if (root->left_child)
+			my_stack.push(root->left_child);
+
+		if (!my_stack.empty())
+		{
+			root = my_stack.top();
+			my_stack.pop();
+		}
+		else
+		{
+			break;
+		}
+	} while (true);
+
+}
+
+//非递归后序遍历（无左孩子加 1、无右孩子加 1）
+
+//1、左搜索，至null,节点入战, 站顶加 1
+
+//2、若站顶为1  右节点存在 对右节点重复 1   右节点不在   站顶加1
+
+//3、若站顶为2  访问  弹出
+
+//note!  root 实时更新为当前节点
+
+template<typename T>
+void go_left(MyClass<T> *root)
+{
+	while (root)
+	{
+		my_stack.push(root);
+		my_num.push(0);
+		root = root->left_child;
+	}
+}
+
+template<typename T>
+void for_each_later(MyClass<T> *root)
+{
+	go_left(root);
+	root = my_stack.top();
+	my_num.top() += 1;
+
+	do
+	{
+		if (my_num.top() == 1)
+		{
+			if (my_stack.top()->right_child)
+			{
+				root = my_stack.top()->right_child;
+
+				go_left(root);
+
+				root = my_stack.top();
+
+				my_num.top() += 1;
+			}
+			else
+			{
+					my_num.top() += 1;
+			}
+		}
+
+		if (my_num.top() == 2)
+		{
+			my_stack.top()->visit(my_stack.top());
+			my_stack.pop();
+
+			if (!my_stack.empty())
+				root = my_stack.top();
+
+			my_num.pop();
+
+			if (!my_stack.empty())
+				my_num.top() += 1;
+		}
+
+	} while (!my_stack.empty());
+
+}
+
+//非递归中序遍历
+
+//1、左搜索，至null,节点入战
+
+template<typename T>
+void for_each_mid(MyClass<T> *root)
+{
+	go_left(root);
+
+	while (!my_stack.empty())
+	{
+		root = my_stack.top();
+
+		root->visit(root);
+
+		if (root->right_child)
+		{
+			root = root->right_child;
+
+			my_stack.pop();
+			go_left(root);
+		}
+		else
+		{
+			my_stack.pop();
+		}
+	}
+
+}
+
+
+void main()
+{
+	MyClass<char> a, b, c, d, e, f;
+	a.left_child = &b;
+	a.right_child = &c;
+	b.left_child = &d;
+	c.left_child = &e;
+	c.right_child = &f;
+
+	a.data = 'a';
+	b.data = 'b';
+	c.data = 'c';
+	d.data = 'd';
+	e.data = 'e';
+	f.data = 'f';
+
+	for_each(&a);
+
+	std::cout << "___________________________________\n";
+
+	for_each_mid(&a);
+
+	std::cout << d.depth;
+
+	return;
+}
