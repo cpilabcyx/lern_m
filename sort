@@ -46,7 +46,6 @@ void sort_bub(t *arry, int len)
 	}
 }
 
-//插入排序
 template<typename t>
 void print(t *arry, int len)
 {
@@ -57,10 +56,40 @@ void print(t *arry, int len)
 	}
 }
 
+
+//希尔排序，先写插入排序，改编
+template<typename t>
+void sort_sell(t *arry, int len)
+{
+	int gap = len;
+
+	do
+	{
+		gap = gap / 3 + 1;
+
+		for (int k = 0; k < gap; k++)
+		{
+			for (int index = gap + k; index < len; index += gap)
+			{
+				t temp = arry[index];
+
+				int j;
+				for (j = index - gap; (j >= 0 && arry[j] > temp); j -= gap)
+				{
+					arry[j + gap] = arry[j];//后移
+				}
+
+				arry[j + gap] = temp;
+			}
+		}
+
+	} while (gap != 1);
+}
+
 void main()
 {
-	double a[5] = { 5.5, 13.2, 22.8, 31.6, 44 };
-	sort_bub(a, 5);
-	print(a,5);
+	double a[10] = { 5.5, 13.2, 22.8, 31.6, 44, 334, 4, 45, 41, 555 };
+	sort_sell(a, 10);
+	print(a,10);
 
 }
