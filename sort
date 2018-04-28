@@ -1,0 +1,66 @@
+#include<set>
+#include<iostream>
+#include<queue>
+#include<vector>
+
+using namespace std;
+
+//插入排序,从1开始，对第i个元素，依次对比左侧元素，大于该元素则右移，至正确位置插入
+template<typename t>
+void sort_insert(t *arry, int len)
+{
+	int index = 1;
+	for (; index < len; index++)
+	{
+		t temp = arry[index];
+
+		int j;
+		for (j = index - 1; (j >= 0 && arry[j] > temp); j--)
+		{
+			arry[j + 1] = arry[j];//后移
+		}
+
+		arry[j+1] = temp;
+	}
+}
+
+template<typename t>
+void sort_bub(t *arry, int len)
+{
+	bool right = false;
+	for (int i = 0; (i < len - 1 && !right); i++)
+	{
+		right = true;
+
+		for (int j = 0; j < len - 1 - i; j++)
+		{
+			if (arry[j] > arry[j + 1])
+			{
+				t temp = arry[j];
+				arry[j] = arry[j + 1];
+				arry[j + 1] = temp;
+
+				right = false;
+			}
+		}
+	}
+}
+
+//插入排序
+template<typename t>
+void print(t *arry, int len)
+{
+
+	for (int index = 0; index < len; index++)
+	{
+		cout << arry[index] << " ";
+	}
+}
+
+void main()
+{
+	double a[5] = { 5.5, 13.2, 22.8, 31.6, 44 };
+	sort_bub(a, 5);
+	print(a,5);
+
+}
