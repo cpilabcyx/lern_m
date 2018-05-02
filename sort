@@ -86,10 +86,53 @@ void sort_sell(t *arry, int len)
 	} while (gap != 1);
 }
 
+template<typename t>
+void myswap(t& a, t& b)
+{
+	t tepm = a;
+	a = b;
+	b = tepm;
+}
+
+template<typename t>
+int divide(t *arry, int low, int hight)
+{
+	t temp = arry[low];
+
+	while (low < hight)
+	{
+		while (low < hight&&arry[hight]>temp)
+		{
+			hight--;
+		}
+		myswap(arry[low], arry[hight]);
+
+		while (low < hight&&arry[low] < temp)
+		{
+			low++;
+		}
+		myswap(arry[low], arry[hight]);
+	}
+	return low;
+}
+
+//快速排序
+template<typename t>
+void sort_quick(t *arry, int low, int hight)
+{
+	if (low < hight)
+	{
+		int pos = divide(arry, low, hight);
+
+		sort_quick(arry, low, pos - 1);
+		sort_quick(arry, pos + 1, hight);
+	}
+}
+
 void main()
 {
-	double a[10] = { 5.5, 13.2, 22.8, 31.6, 44, 334, 4, 45, 41, 555 };
-	sort_sell(a, 10);
+	double a[10] = { 25.5, 13.2, 22.8, 31.6, 44, 334, 4, 45, 41, 555 };
+	sort_quick(a, 0, 9);
 	print(a,10);
 
 }
